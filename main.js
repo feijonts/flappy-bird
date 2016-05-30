@@ -5,9 +5,13 @@ var estado = {
         game.load.image('passarinho','assets/Fireball_50x50.png' );
         
         game.load.image('quadrado' , 'assets/pipe.png');
+        
+        game.load.audio('pulo', 'assets/jump.wav');
     },
     
     create: function () {
+        this.somPulo = game.add.audio('pulo');
+        
         game.stage.backgroundColor = '#71c5cf';
         
         game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -42,7 +46,7 @@ var estado = {
         if (this.passarinho.y > 490)
             this.reiniciaJogo(); 
         
-        game.physics.arcade.overlap(this.passarinho, this.canos, this.reiniciaJogo);
+        game.physics.arcade.overlap(this.passarinho, this.canos, this.animacaoMorte, null, this);
         
         if(this.passarinho.angle < 20)
             this.passarinho.angle += 1;
@@ -54,13 +58,17 @@ var estado = {
     },
     
     pulo: function () {
-        this.passarinho.body.velocity.y = -350;
-        
-        var animacao = game.add.tween(this.passarinho);
-        
-        animacao.to({angle: -20},100);
-        
-        animacao.start();
+        if(this.passarinho.alive && this.passarinho.y > 20) {
+            this.passarinho.body.velocity.y = -350;
+
+            var animacao = game.add.tween(this.passarinho);
+
+            animacao.to({angle: -20},100);
+
+            animacao.start();
+            
+            this.somPulo.play();
+        }
     }, 
     
     addQuadrado: function(x,y) {
@@ -85,7 +93,16 @@ var estado = {
         for (var i = 0; i < 8; i++)
             if (i != buraco && i != buraco + 1)
                 this.addQuadrado(400,10 + i*60);
+    },
         
+    animacaoMorte: function(){
+        this.passarinho.alive = false;
+        
+       game.time.events.remove(this.timer);
+
+        this.canos.forEach(function(quad){
+            quad.body.velocity.x = 0;               
+        }, this);
     }
 
 
