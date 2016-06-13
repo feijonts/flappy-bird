@@ -26,7 +26,7 @@ var estado = {
         
         espaco.onDown.add(this.pulo, this);
         
-        this.canos = game.add.group();
+        this.canos = game.add.group(); 
         
         this.timer = game.time.events.loop(1500, this.addCano, this);
         
@@ -44,7 +44,7 @@ var estado = {
     update: function(){
         
         if (this.passarinho.y > 490)
-            this.reiniciaJogo(); 
+            this.animacaoMorte(); 
         
         game.physics.arcade.overlap(this.passarinho, this.canos, this.animacaoMorte, null, this);
         
@@ -98,14 +98,23 @@ var estado = {
     animacaoMorte: function(){
         this.passarinho.alive = false;
         
-       game.time.events.remove(this.timer);
+        game.time.events.remove(this.timer);
 
         this.canos.forEach(function(quad){
             quad.body.velocity.x = 0;               
         }, this);
+        
+        this.mostraFinal();
+    },
+
+    mostraFinal: function() {
+        this.placar = game.add.text(200, 200, this.pontos, {
+            font: "70px Arial Black",
+            fill: "#fff"
+        });
+        
     }
-
-
+    
 };
 
 game.state.add('main', estado);
