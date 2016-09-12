@@ -7,6 +7,8 @@ var estado = {
         game.load.image('quadrado' , 'assets/pipe.png');
         
         game.load.audio('pulo', 'assets/jump.wav');
+        
+        game.load.image('botao', 'assets/botao.png')
     },
     
     create: function () {
@@ -38,7 +40,15 @@ var estado = {
         this.pontos = 0;
         
         this.passarinho.anchor.setTo(-0.2, 0.5);
-                
+        this.box = game.add.graphics(0,0);
+        this.box.beginFill('0x000000', 0.5);
+        this.box.drawRect(90, 100, 220, 300);
+        this.box.endFill();
+        this.box.visible = false;
+        
+        
+         this.botao = game.add.button(140, 350, 'botao', this.reiniciaJogo, this);
+         this.botao.visible = false;
     },
         
     update: function(){
@@ -108,7 +118,10 @@ var estado = {
     },
 
     mostraFinal: function() {
-        this.placar = game.add.text(200, 200, this.pontos, {
+        this.placar.destroy();
+        this.box.visible = true;
+        this.botao.visible = true;
+        this.final = game.add.text(170, 200, this.pontos, {
             font: "70px Arial Black",
             fill: "#fff"
         });
